@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  dbcrawling:
+    container_name: crawler_db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+    ports:
+      - "20001:3306"
+  phpmyadmin_crawler:
+    container_name: crawler_pma
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: dbcrawling
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "20002:80"
+
+  jupyter:
+    container_name: crawler_jupyter
+    build: ./docker/python
+    image: "jupyter/all-spark-notebook"
+    volumes:
+      - ./jupyter:/home/jovyan/work
+    ports:
+      - 20003:8888
+    environment:
+      - JUPYTER_TOKEN=siberintegritas
